@@ -1,18 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, StatusBar, ActivityIndicator, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    Text,
+    View,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+    ActivityIndicator,
+    ScrollView,
+    StatusBar,
+    FlatList,
+} from 'react-native';
 import { COLORS, SPACING } from '../theme/theme';
-import InputHeader from '../components/InputHeader';
 import {
     upcomingMovies,
     nowPlayingMovies,
     popularMovies,
     baseImagePath,
 } from '../api/apicalls';
+import InputHeader from '../components/InputHeader';
 import CategoryHeader from '../components/CategoryHeader';
 import SubMovieCard from '../components/SubMovieCard';
 import MovieCard from '../components/MovieCard';
 
-const { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
 
 const getNowPlayingMoviesList = async () => {
     try {
@@ -53,85 +63,70 @@ const getPopularMoviesList = async () => {
     }
 };
 
-
-const HomeScreen = (navigation: any) => {
-
-    const [nowPlayingMovieList, setNowPlayingMovieList] = useState<any>(undefined)
-    const [popularMovieList, setPopularMovieList] = useState<any>(undefined)
-    const [upcomingMovieList, setUpcomingMovieList] = useState<any>(undefined)
-
+const HomeScreen = ({ navigation }: any) => {
+    const [nowPlayingMoviesList, setNowPlayingMoviesList] =
+        useState<any>(undefined);
+    const [popularMoviesList, setPopularMoviesList] = useState<any>(undefined);
+    const [upcomingMoviesList, setUpcomingMoviesList] = useState<any>(undefined);
 
     useEffect(() => {
         (async () => {
             let tempNowPlaying = await getNowPlayingMoviesList();
-            setNowPlayingMovieList([
+            setNowPlayingMoviesList([
                 { id: 'dummy1' },
                 ...tempNowPlaying.results,
                 { id: 'dummy2' },
             ]);
 
             let tempPopular = await getPopularMoviesList();
-            setPopularMovieList(tempPopular.results);
+            setPopularMoviesList(tempPopular.results);
 
             let tempUpcoming = await getUpcomingMoviesList();
-            setUpcomingMovieList(tempUpcoming.results);
+            setUpcomingMoviesList(tempUpcoming.results);
         })();
     }, []);
-    // console.log(nowPlayingMovieList)
 
     const searchMoviesFunction = () => {
-        navigation.navigate('Search')
-    }
+        navigation.navigate('Search');
+    };
 
     if (
-        nowPlayingMovieList == undefined &&
-        nowPlayingMovieList == null &&
-        popularMovieList == undefined &&
-        popularMovieList == null &&
-        upcomingMovieList == undefined &&
-        upcomingMovieList == null
+        nowPlayingMoviesList == undefined &&
+        nowPlayingMoviesList == null &&
+        popularMoviesList == undefined &&
+        popularMoviesList == null &&
+        upcomingMoviesList == undefined &&
+        upcomingMoviesList == null
     ) {
-        // return (
-        //     <ScrollView
-        //         style={styles.container}
-        //         bounces={false}
-        //         contentContainerStyle={styles.scrollViewContainer}
-        //     >
-        //         <StatusBar hidden />
-        //         <View
-        //             style={styles.InputHeaderContainer}>
-        //             <InputHeader
-        //                 searchFunction={searchMoviesFunction} />
-        //         </View>
-        //         <View
-        //             style={styles.loadingContainer}>
-        //             <ActivityIndicator
-        //                 size={'large'}
-        //                 color={COLORS.Orange} />
-        //         </View>
-        //         
-        //     </ScrollView>
-        // )
+        return (
+            <ScrollView
+                style={styles.container}
+                bounces={false}
+                contentContainerStyle={styles.scrollViewContainer}>
+                <StatusBar hidden />
+
+                <View style={styles.InputHeaderContainer}>
+                    <InputHeader searchFunction={searchMoviesFunction} />
+                </View>
+
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size={'large'} color={COLORS.Orange} />
+                </View>
+            </ScrollView>
+        );
     }
 
-
-
     return (
-        <ScrollView
-            style={styles.container}
-            bounces={false}
-            contentContainerStyle={styles.scrollViewContainer}
-        >
+        <ScrollView style={styles.container} bounces={false}>
             <StatusBar hidden />
-            <View
-                style={styles.InputHeaderContainer}>
-                <InputHeader
-                    searchFunction={searchMoviesFunction} />
+
+            <View style={styles.InputHeaderContainer}>
+                <InputHeader searchFunction={searchMoviesFunction} />
             </View>
 
             <CategoryHeader title={'Now Playing'} />
             <FlatList
-                data={nowPlayingMovieList}
+                data={nowPlayingMoviesList}
                 keyExtractor={(item: any) => item.id}
                 bounces={false}
                 snapToInterval={width * 0.7 + SPACING.space_36}
@@ -156,7 +151,7 @@ const HomeScreen = (navigation: any) => {
                             }}
                             cardWidth={width * 0.7}
                             isFirst={index == 0 ? true : false}
-                            isLast={index == upcomingMovieList?.length - 1 ? true : false}
+                            isLast={index == upcomingMoviesList?.length - 1 ? true : false}
                             title={item.original_title}
                             imagePath={baseImagePath('w780', item.poster_path)}
                             genre={item.genre_ids.slice(1, 4)}
@@ -168,7 +163,7 @@ const HomeScreen = (navigation: any) => {
             />
             <CategoryHeader title={'Popular'} />
             <FlatList
-                data={popularMovieList}
+                data={popularMoviesList}
                 keyExtractor={(item: any) => item.id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -182,7 +177,7 @@ const HomeScreen = (navigation: any) => {
                         }}
                         cardWidth={width / 3}
                         isFirst={index == 0 ? true : false}
-                        isLast={index == upcomingMovieList?.length - 1 ? true : false}
+                        isLast={index == upcomingMoviesList?.length - 1 ? true : false}
                         title={item.original_title}
                         imagePath={baseImagePath('w342', item.poster_path)}
                     />
@@ -190,7 +185,7 @@ const HomeScreen = (navigation: any) => {
             />
             <CategoryHeader title={'Upcoming'} />
             <FlatList
-                data={upcomingMovieList}
+                data={upcomingMoviesList}
                 keyExtractor={(item: any) => item.id}
                 horizontal
                 bounces={false}
@@ -204,7 +199,7 @@ const HomeScreen = (navigation: any) => {
                         }}
                         cardWidth={width / 3}
                         isFirst={index == 0 ? true : false}
-                        isLast={index == upcomingMovieList?.length - 1 ? true : false}
+                        isLast={index == upcomingMoviesList?.length - 1 ? true : false}
                         title={item.original_title}
                         imagePath={baseImagePath('w342', item.poster_path)}
                     />
@@ -214,10 +209,7 @@ const HomeScreen = (navigation: any) => {
     );
 };
 
-export default HomeScreen;
-
 const styles = StyleSheet.create({
-
     container: {
         display: 'flex',
         backgroundColor: COLORS.Black,
@@ -236,6 +228,7 @@ const styles = StyleSheet.create({
     },
     containerGap36: {
         gap: SPACING.space_36,
-    }
-
+    },
 });
+
+export default HomeScreen;
