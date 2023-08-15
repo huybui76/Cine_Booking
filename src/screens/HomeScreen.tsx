@@ -117,7 +117,7 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
     return (
-        <ScrollView style={styles.container} bounces={false}>
+        <ScrollView style={styles.container} bounces={false} showsVerticalScrollIndicator={false}>
             <StatusBar hidden />
 
             <View style={styles.InputHeaderContainer}>
